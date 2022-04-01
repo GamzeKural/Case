@@ -36,7 +36,9 @@ function ListDataQuestions(){
     $sql = "SELECT * FROM questions";
     $q = $db->query($sql);
     $questions = $q->fetchAll(PDO::FETCH_ASSOC);
-
+    // $payLoad=[];
+    // $payLoad['questions']=$questions;
+    // $payLoad['totaltimer']=$totaltimer;
     // echo "<pre>";
     $json_veri=json_encode($questions);
     print_r($json_veri);
@@ -75,42 +77,69 @@ function UpdateDataQuestions($id, $sequence, $question_type, $question_explanati
 // UpdateDataQuestions(10,1,1,'testexplanationgüncel','testcontentgüncel','2022-03-30','2022-04-30',7,130,5,1);
 
 
-###VERİ PASİFE ALMA###
-function DeactivationDataQuestions($id){
+// ###VERİ PASİFE ALMA###
+// function DeactivationDataQuestions($id){
     
+//     global $db;
+
+//     $sql = "UPDATE questions SET status = 0 
+//             WHERE id='{$id}'";
+
+//     $q = $db->query($sql);
+
+//     if($q){
+//         echo 'Veritabanında sorunuz pasife alınmıştır.';
+//     }else{
+//         echo 'Bir hata oluştu.';
+//     }
+// }
+
+// // DeactivationDataQuestions(9);
+
+
+// ###PASİF VERİYİ AKTİFLEŞTİRME###
+
+// function ActivationDataQuestions($id){
+    
+//     global $db;
+
+//     $sql = "UPDATE questions SET status = 1 
+//             WHERE id='{$id}'";
+
+//     $q = $db->query($sql);
+
+//     if($q){
+//         echo 'Veritabanında sorunuz aktifleşmiştir.';
+//     }else{
+//         echo 'Bir hata oluştu.';
+//     }
+// }
+
+// // ActivationDataQuestions(9);
+
+function activeOrPassiveQuestions($id){
+
     global $db;
 
-    $sql = "UPDATE questions SET status = 0 
-            WHERE id='{$id}'";
-
+    $sql = "SELECT * FROM questions WHERE id ='{$id}'";
     $q = $db->query($sql);
+    $questions = $q ->fetch(PDO::FETCH_ASSOC);
+    //$forms = $q->fetchAll(PDO::FETCH_ASSOC);
 
-    if($q){
-        echo 'Veritabanında sorunuz pasife alınmıştır.';
-    }else{
-        echo 'Bir hata oluştu.';
-    }
-}
-
-// DeactivationDataQuestions(9);
-
-
-###PASİF VERİYİ AKTİFLEŞTİRME###
-
-function ActivationDataQuestions($id){
+    if($questions['status']==1){
     
-    global $db;
-
-    $sql = "UPDATE questions SET status = 1 
-            WHERE id='{$id}'";
-
-    $q = $db->query($sql);
-
-    if($q){
-        echo 'Veritabanında sorunuz aktifleşmiştir.';
+        $update_sql = "UPDATE questions SET status = 0 
+                WHERE id='{$id}'";
     }else{
-        echo 'Bir hata oluştu.';
+        
+        $update_sql = "UPDATE questions SET status = 1 
+                WHERE id='{$id}'";
+
     }
+    $q = $db->query($update_sql);
+
+    //print_r($forms);
+
 }
 
-// ActivationDataQuestions(9);
+activeOrPassiveQuestions(9);

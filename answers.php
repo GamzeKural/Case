@@ -64,42 +64,69 @@ function UpdateDataAnswers($id,$question_id, $created_at, $updated_at, $answerte
 // UpdateDataAnswers(5,10,'2022-03-30','2022-03-30','testanswer2',1,1);
 
 
-###VERİ PASİFE ALMA###
-function DeactivationDataAnswers($id){
+// ###VERİ PASİFE ALMA###
+// function DeactivationDataAnswers($id){
     
+//     global $db;
+
+//     $sql = "UPDATE answers SET status = 0 
+//             WHERE id='{$id}'";
+
+//     $q = $db->query($sql);
+
+//     if($q){
+//         echo 'Veritabanında cevabınız pasife alınmıştır.';
+//     }else{
+//         echo 'Bir hata oluştu.';
+//     }
+// }
+
+// // DeactivationDataAnswers(7);
+
+
+// ###PASİF VERİYİ AKTİFLEŞTİRME###
+
+// function ActivationDataAnswers($id){
+    
+//     global $db;
+
+//     $sql = "UPDATE answers SET status = 1 
+//             WHERE id='{$id}'";
+
+//     $q = $db->query($sql);
+
+//     if($q){
+//         echo 'Veritabanında cevabınız aktifleşmiştir.';
+//     }else{
+//         echo 'Bir hata oluştu.';
+//     }
+// }
+
+// // ActivationDataAnswers(7);
+
+function activeOrPassiveAnswers($id){
+
     global $db;
 
-    $sql = "UPDATE answers SET status = 0 
-            WHERE id='{$id}'";
-
+    $sql = "SELECT * FROM answers WHERE id ='{$id}'";
     $q = $db->query($sql);
+    $answers= $q ->fetch(PDO::FETCH_ASSOC);
+    //$forms = $q->fetchAll(PDO::FETCH_ASSOC);
 
-    if($q){
-        echo 'Veritabanında cevabınız pasife alınmıştır.';
-    }else{
-        echo 'Bir hata oluştu.';
-    }
-}
-
-// DeactivationDataAnswers(7);
-
-
-###PASİF VERİYİ AKTİFLEŞTİRME###
-
-function ActivationDataAnswers($id){
+    if($answers['status']==1){
     
-    global $db;
-
-    $sql = "UPDATE answers SET status = 1 
-            WHERE id='{$id}'";
-
-    $q = $db->query($sql);
-
-    if($q){
-        echo 'Veritabanında cevabınız aktifleşmiştir.';
+        $update_sql = "UPDATE answers SET status = 0 
+                WHERE id='{$id}'";
     }else{
-        echo 'Bir hata oluştu.';
+        
+        $update_sql = "UPDATE answers SET status = 1 
+                WHERE id='{$id}'";
+
     }
+    $q = $db->query($update_sql);
+
+    //print_r($forms);
+
 }
 
-// ActivationDataAnswers(7);
+activeOrPassiveAnswers(6);
