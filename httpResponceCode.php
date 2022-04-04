@@ -1,13 +1,11 @@
 <?php
-if (!function_exists('http_response_code')) {
-    function http_response_code($code = NULL) {
-
+    function http_response_code1($code = NULL) {
+        $text = '';
         if ($code !== NULL) {
-
             switch ($code) {
                 case 100: $text = 'Continue'; break;
                 case 101: $text = 'Switching Protocols'; break;
-                case 200: $text = 'OK'; break;
+                case 200: $text = 'OK';  break;
                 case 201: $text = 'Created'; break;
                 case 202: $text = 'Accepted'; break;
                 case 203: $text = 'Non-Authoritative Information'; break;
@@ -45,7 +43,16 @@ if (!function_exists('http_response_code')) {
                 default:
                     exit('Unknown http status code "' . htmlentities($code) . '"');
                 break;
+
             }
+
+
         }
+        
+        return $text;
     }
+
+
+function asd(){
+    echo 'asd';
 }

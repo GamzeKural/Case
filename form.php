@@ -1,32 +1,42 @@
 <?php
 require 'db.php';
 require 'httpResponceCode.php';
+// print_r($_POST);
+//  $formname=$_GET['formname'];
+//  $status=$_GET['status'];
+$formname="toefl";
+$status=1;
+$arr=[
+      "formname"=>$formname,
+      "status"=>$status
+    ];
+$arr = json_encode($arr);
 
-// $arr=['$formname','$status'];
 
-// class Form{
-//     public $formname;
-//     public $status;
-// }
 
 ###VERİ EKLEME###
-function AddDataForm($formname, $status){
+// if(isset($_POST['formname'])){
+function AddDataForm($arr){
     global $db;
     global $text;
+    
+    $arr = json_decode($arr,true);
+    $formname=$arr['formname'];
+    $status=$arr['status'];
+    
      $sql = "INSERT INTO form
              SET formname = '{$formname}',
              status = '{$status}'";
     
     $q = $db->query($sql);
-       
     if($q){
-        http_response_code(201);
+      echo http_response_code1(200);
     }else{
-        http_response_code(400);
+       echo http_response_code1(400);
     }
 
 }
-  AddDataForm('abc sınav',1);
+AddDataForm($arr);
 
 
 ###VERİ LİSTELEME###
@@ -42,11 +52,23 @@ function ListDataForm(){
 
 }
 // ListDataForm();
-
-
+$id=20;
+$formname="güncel2 sınav";
+$status=1;
+$arr2 =[
+    "id"=>$id,
+"formname"=>$formname,
+"status"=>$status];
+$arr2 = json_encode($arr2);
 ###VERİ GÜNCELLEME###
-function UpdateDataForm($id, $formname, $status){
+function UpdateDataForm($arr2){
     global $db;
+    global $text;
+    
+    $arr2 = json_decode($arr2,true);
+    $id=$arr2['id'];
+    $formname=$arr2['formname'];
+    $status=$arr2['status'];
 
     $sql = "UPDATE form
             SET formname = '{$formname}',
@@ -56,12 +78,12 @@ function UpdateDataForm($id, $formname, $status){
     $q = $db->query($sql);
 
     if($q){
-        echo 'Veritabanında formunuz güncellenmiştir.';
+        echo http_response_code1(200);
     }else{
-        echo 'Bir hata oluştu.';
+       echo http_response_code1(400);
     }
 }
-// UpdateDataForm(6,'güncel sınav',1);
+// UpdateDataForm($arr2);
 
 
 // ###VERİ PASİFE ALMA###
@@ -129,4 +151,5 @@ function activeOrPassiveForm($id){
 
 }
 
-activeOrPassiveForm(6);
+// activeOrPassiveForm(6);
+// }

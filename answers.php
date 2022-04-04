@@ -1,9 +1,32 @@
 <?php
 require 'db.php';
-
+require 'httpResponceCode.php';
+$question_id=9;
+$created_at="2022-04-04";
+$updated_at="2022-04-04";
+$answertext="hello";
+$is_correct=0;
+$status=1;
+$arr=[
+    "question_id"=>$question_id,
+    "created_at"=>$created_at,
+    "updated_at"=>$updated_at,
+    "answertext"=>$answertext,
+    "is_correct"=>$is_correct,
+    "status"=>$status];
+$arr = json_encode($arr);
 ###VERİ EKLEME###
-function AddDataAnswers($question_id, $created_at, $updated_at, $answertext, $is_correct, $status){
+function AddDataAnswers($arr){
     global $db;
+    global $text;
+    
+    $arr = json_decode($arr,true);
+    $question_id=$arr['question_id'];
+    $created_at=$arr['created_at'];
+    $updated_at=$arr['updated_at'];
+    $answertext=$arr['answertext'];
+    $is_correct=$arr['is_correct'];
+    $status=$arr['status'];
      $sql = "INSERT INTO answers
              SET question_id = '{$question_id}',
              created_at = '{$created_at}',
@@ -15,13 +38,13 @@ function AddDataAnswers($question_id, $created_at, $updated_at, $answertext, $is
     $q = $db->query($sql);
        
     if($q){
-        echo 'Veritabanına cevabınız eklenmiştir.';
+        echo http_response_code1(200);
     }else{
-        echo 'Bir hata oluştu.';
+        echo http_response_code1(400);
     }
 
 }
-//   AddDataAnswers(10,'2022-03-31','2022-03-31','selamnaber',1,0);
+//   AddDataAnswers($arr);
 
 
 ###VERİ LİSTELEME###
@@ -36,12 +59,39 @@ function ListDataAnswers(){
     print_r($json_veri);
 
 }
-ListDataAnswers();
+// ListDataAnswers();
 
 
 ###VERİ GÜNCELLEME###
-function UpdateDataAnswers($id,$question_id, $created_at, $updated_at, $answertext, $is_correct, $status){
+$id=8;
+$question_id=9;
+$created_at="2022-04-04";
+$updated_at="2022-04-04";
+$answertext="hello güncel";
+$is_correct=0;
+$status=1;
+$arr2=[
+    "id"=>$id,
+    "question_id"=>$question_id,
+    "created_at"=>$created_at,
+    "updated_at"=>$updated_at,
+    "answertext"=>$answertext,
+    "is_correct"=>$is_correct,
+    "status"=>$status];
+$arr2 = json_encode($arr2);
+
+function UpdateDataAnswers($arr2){
     global $db;
+    global $text;
+    
+    $arr2 = json_decode($arr2,true);
+    $id=$arr2['id'];
+    $question_id=$arr2['question_id'];
+    $created_at=$arr2['created_at'];
+    $updated_at=$arr2['updated_at'];
+    $answertext=$arr2['answertext'];
+    $is_correct=$arr2['is_correct'];
+    $status=$arr2['status'];
 
     $sql = "UPDATE answers
             SET question_id = '{$question_id}',
@@ -55,13 +105,13 @@ function UpdateDataAnswers($id,$question_id, $created_at, $updated_at, $answerte
     $q = $db->query($sql);
 
     if($q){
-        echo 'Veritabanında cevabınız güncellenmiştir.';
+      echo  http_response_code1(200);
     }else{
-        echo 'Bir hata oluştu.';
+       echo http_response_code1(400);
     }
 }
 
-// UpdateDataAnswers(5,10,'2022-03-30','2022-03-30','testanswer2',1,1);
+// UpdateDataAnswers($arr2);
 
 
 // ###VERİ PASİFE ALMA###
@@ -129,4 +179,4 @@ function activeOrPassiveAnswers($id){
 
 }
 
-activeOrPassiveAnswers(6);
+// activeOrPassiveAnswers(6);
