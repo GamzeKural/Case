@@ -1,28 +1,44 @@
 <?php
 require 'db.php';
 require 'httpResponceCode.php';
-$sequence=6;
-$question_type=2;
-$question_explanation="Doğru şıkkı işaretle";
-$question_content="Php nedir";
-$created_at="2022-04-04";
-$updated_at="2022-04-04";
-$form_id=7;
-$time=60;
-$score=5;
-$status=1;
-$arr=[
-    "sequence"=>$sequence,
-    "question_type"=>$question_type,
-    "question_explanation"=>$question_explanation,
-    "question_content"=>$question_content,
-    "created_at"=>$created_at,
-    "updated_at"=>$updated_at,
-    "form_id"=>$form_id,
-    "time"=>$time,
-    "score"=>$score,
-    "status"=>$status];
-$arr = json_encode($arr);
+// $sequence=6;
+// $question_type=2;
+// $question_explanation="Doğru şıkkı işaretle";
+// $question_content="Php nedir";
+// $created_at="2022-04-04";
+// $updated_at="2022-04-04";
+// $form_id=7;
+// $time=60;
+// $score=5;
+// $status=1;
+
+// $sequence=$_POST['sequence'];
+// $question_type=$_POST['question_type'];
+// $question_explanation=$_POST['question_explanation'];
+// $question_content=$_POST['question_content'];
+// $created_at=$_POST['created_at'];
+// $updated_at=$_POST['updated_at'];
+// $form_id=$_POST['form_id'];
+// $time=$_POST['time'];
+// $score=$_POST['score'];
+// $status=$_POST['status'];
+// $arr=[
+//     "sequence"=>$sequence,
+//     "question_type"=>$question_type,
+//     "question_explanation"=>$question_explanation,
+//     "question_content"=>$question_content,
+//     "created_at"=>$created_at,
+//     "updated_at"=>$updated_at,
+//     "form_id"=>$form_id,
+//     "time"=>$time,
+//     "score"=>$score,
+//     "status"=>$status];
+// $arr = json_encode($arr);
+
+if($_SERVER['REQUEST_METHOD'] == "POST" && $_REQUEST['add_form_questions']){
+
+    AddDataQuestions($_REQUEST);
+}
 
 ###VERİ EKLEME###
 function AddDataQuestions($arr){
@@ -30,7 +46,6 @@ function AddDataQuestions($arr){
     global $db;
     global $text;
     
-    $arr = json_decode($arr,true);
     $sequence=$arr['sequence'];
     $question_type=$arr['question_type'];
     $question_explanation=$arr['question_explanation'];
@@ -53,20 +68,29 @@ function AddDataQuestions($arr){
              time = '{$time}',
              score = '{$score}',
              status = '{$status}'";
-    
-    $q = $db->query($sql);
-       
-    if($q){
-       echo http_response_code1(200);
+
+    $sorgu = $db->prepare($sql);
+    $sorgu->execute();
+
+    $last_id = $db->lastInsertId();
+
+    $sorgu = $db->query("SELECT * FROM questions WHERE id = $last_id");
+
+    $cikti = $sorgu->fetch(PDO::FETCH_ASSOC);
+    if($cikti){
+        echo json_encode(["message" => 'Başarıyla yeni question verisi ekledin',"data" => $cikti,"response_code" => http_response_code1(200)]);
     }else{
-       echo http_response_code1(400);
+        echo http_response_code1(400);
     }
 
 
 }
 //  AddDataQuestions($arr);
 
+if($_SERVER['REQUEST_METHOD'] == "GET" && $_REQUEST['list_form_questions']){
 
+    ListDataQuestions($_REQUEST);
+}
 ###VERİ LİSTELEME###
 function ListDataQuestions(){
     global $db;
@@ -83,49 +107,64 @@ function ListDataQuestions(){
 }
 // ListDataQuestions();
 
-$id=11;
-$sequence=5;
-$question_type=2;
-$question_explanation="Doğru şıkkı işaretle";
-$question_content="Php nedir güncel";
-$created_at="2022-04-04";
-$updated_at="2022-04-04";
-$form_id=7;
-$time=60;
-$score=5;
-$status=1;
-$arr2=[
-    "id"=>$id,
-    "sequence"=>$sequence,
-    "question_type"=>$question_type,
-    "question_explanation"=>$question_explanation,
-    "question_content"=>$question_content,
-    "created_at"=>$created_at,
-    "updated_at"=>$updated_at,
-    "form_id"=>$form_id,
-    "time"=>$time,
-    "score"=>$score,
-    "status"=>$status];
-$arr2 = json_encode($arr2);
+// $id=11;
+// $sequence=5;
+// $question_type=2;
+// $question_explanation="Doğru şıkkı işaretle";
+// $question_content="Php nedir güncel";
+// $created_at="2022-04-04";
+// $updated_at="2022-04-04";
+// $form_id=7;
+// $time=60;
+// $score=5;
+// $status=1;
 
+// $id=$_POST['id'];
+// $sequence=$_POST['sequence'];
+// $question_type=$_POST['question_type'];
+// $question_explanation=$_POST['question_explanation'];
+// $question_content=$_POST['question_content'];
+// $created_at=$_POST['created_at'];
+// $updated_at=$_POST['updated_at'];
+// $form_id=$_POST['form_id'];
+// $time=$_POST['time'];
+// $score=$_POST['score'];
+// $status=$_POST['status'];
+// $arr2=[
+//     "id"=>$id,
+//     "sequence"=>$sequence,
+//     "question_type"=>$question_type,
+//     "question_explanation"=>$question_explanation,
+//     "question_content"=>$question_content,
+//     "created_at"=>$created_at,
+//     "updated_at"=>$updated_at,
+//     "form_id"=>$form_id,
+//     "time"=>$time,
+//     "score"=>$score,
+//     "status"=>$status];
+// $arr2 = json_encode($arr2);
+
+if($_SERVER['REQUEST_METHOD'] == "PUT" && $_REQUEST['update_form_questions']){
+
+    UpdateDataQuestions($_REQUEST);
+}
 
 ###VERİ GÜNCELLEME###
-function UpdateDataQuestions($arr2){
+function UpdateDataQuestions($arr){
     global $db;
     global $text;
     
-    $arr2 = json_decode($arr2,true);
-    $id=$arr2['id'];
-    $sequence=$arr2['sequence'];
-    $question_type=$arr2['question_type'];
-    $question_explanation=$arr2['question_explanation'];
-    $question_content=$arr2['question_content'];
-    $created_at=$arr2['created_at'];
-    $updated_at=$arr2['updated_at'];
-    $form_id=$arr2['form_id'];
-    $time=$arr2['time'];
-    $score=$arr2['score'];
-    $status=$arr2['status'];
+    $id=$arr['id'];
+    $sequence=$arr['sequence'];
+    $question_type=$arr['question_type'];
+    $question_explanation=$arr['question_explanation'];
+    $question_content=$arr['question_content'];
+    $created_at=$arr['created_at'];
+    $updated_at=$arr['updated_at'];
+    $form_id=$arr['form_id'];
+    $time=$arr['time'];
+    $score=$arr['score'];
+    $status=$arr['status'];
 
     $sql = "UPDATE questions
             SET sequence = '{$sequence}',
@@ -140,12 +179,16 @@ function UpdateDataQuestions($arr2){
              status = '{$status}'
              WHERE id = '{$id}'";
     
-    $q = $db->query($sql);
+    $sorgu = $db->prepare($sql);
+    $sorgu->execute();
+    // $last_id = $db->lastInsertId();
+    $sorgu = $db->query("SELECT * FROM questions WHERE id = $id");
 
-    if($q){
-       echo http_response_code1(200);
+    $cikti = $sorgu->fetch(PDO::FETCH_ASSOC);
+    if($cikti){
+        echo json_encode(["message" => 'Başarıyla yeni question verisi güncelledin',"data" => $cikti,"response_code" => http_response_code1(200)]);
     }else{
-       echo http_response_code1(400);
+        echo http_response_code1(400);
     }
 }
 
@@ -217,4 +260,4 @@ function activeOrPassiveQuestions($id){
 
 }
 
-activeOrPassiveQuestions(9);
+// activeOrPassiveQuestions(9);

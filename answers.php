@@ -1,32 +1,44 @@
 <?php
 require 'db.php';
 require 'httpResponceCode.php';
-$question_id=9;
-$created_at="2022-04-04";
-$updated_at="2022-04-04";
-$answertext="hello";
-$is_correct=0;
-$status=1;
-$arr=[
-    "question_id"=>$question_id,
-    "created_at"=>$created_at,
-    "updated_at"=>$updated_at,
-    "answertext"=>$answertext,
-    "is_correct"=>$is_correct,
-    "status"=>$status];
-$arr = json_encode($arr);
+// $question_id=9;
+// $created_at="2022-04-04";
+// $updated_at="2022-04-04";
+// $answertext="hello";
+// $is_correct=0;
+// $status=1;
+
+// // $question_id=$_POST['question_id'];
+// // $created_at=$_POST['created_at'];
+// // $updated_at=$_POST['updated_at'];
+// // $answertext=$_POST['answertext'];
+// // $is_correct=$_POST['is_correct'];
+// // $status=$_POST['status'];
+// $arr=[
+//     "question_id"=>$question_id,
+//     "created_at"=>$created_at,
+//     "updated_at"=>$updated_at,
+//     "answertext"=>$answertext,
+//     "is_correct"=>$is_correct,
+//     "status"=>$status];
+// $arr = json_encode($arr);
+
+if($_SERVER['REQUEST_METHOD'] == "POST" && $_REQUEST['add_form_answers']){
+
+    AddDataAnswers($_REQUEST);
+}
 ###VERİ EKLEME###
 function AddDataAnswers($arr){
     global $db;
     global $text;
     
-    $arr = json_decode($arr,true);
     $question_id=$arr['question_id'];
     $created_at=$arr['created_at'];
     $updated_at=$arr['updated_at'];
     $answertext=$arr['answertext'];
     $is_correct=$arr['is_correct'];
     $status=$arr['status'];
+
      $sql = "INSERT INTO answers
              SET question_id = '{$question_id}',
              created_at = '{$created_at}',
@@ -34,11 +46,17 @@ function AddDataAnswers($arr){
              answertext = '{$answertext}',
              is_correct = '{$is_correct}',
              status = '{$status}'";
+
+    $sorgu = $db->prepare($sql);
+    $sorgu->execute();
+
+    $last_id = $db->lastInsertId();
     
-    $q = $db->query($sql);
-       
-    if($q){
-        echo http_response_code1(200);
+    $sorgu = $db->query("SELECT * FROM answers WHERE id = $last_id");
+
+    $cikti = $sorgu->fetch(PDO::FETCH_ASSOC);
+    if($cikti){
+        echo json_encode(["message" => 'Başarıyla yeni answer verisi ekledin',"data" => $cikti,"response_code" => http_response_code1(200)]);
     }else{
         echo http_response_code1(400);
     }
@@ -46,7 +64,10 @@ function AddDataAnswers($arr){
 }
 //   AddDataAnswers($arr);
 
+if($_SERVER['REQUEST_METHOD'] == "GET" && $_REQUEST['list_form_answers']){
 
+    ListDataAnswers($_REQUEST);
+}
 ###VERİ LİSTELEME###
 function ListDataAnswers(){
     global $db;
@@ -63,28 +84,40 @@ function ListDataAnswers(){
 
 
 ###VERİ GÜNCELLEME###
-$id=8;
-$question_id=9;
-$created_at="2022-04-04";
-$updated_at="2022-04-04";
-$answertext="hello güncel";
-$is_correct=0;
-$status=1;
-$arr2=[
-    "id"=>$id,
-    "question_id"=>$question_id,
-    "created_at"=>$created_at,
-    "updated_at"=>$updated_at,
-    "answertext"=>$answertext,
-    "is_correct"=>$is_correct,
-    "status"=>$status];
-$arr2 = json_encode($arr2);
+// $id=8;
+// $question_id=9;
+// $created_at="2022-04-04";
+// $updated_at="2022-04-04";
+// $answertext="hello güncel";
+// $is_correct=0;
+// $status=1;
+
+// $id=$_POST['id'];
+// $question_id=$_POST['question_id'];
+// $created_at=$_POST['created_at'];
+// $updated_at=$_POST['updated_at'];
+// $answertext=$_POST['answertext'];
+// $is_correct=$_POST['is_correct'];
+// $status=$_POST['status'];
+// $arr2=[
+//     "id"=>$id,
+//     "question_id"=>$question_id,
+//     "created_at"=>$created_at,
+//     "updated_at"=>$updated_at,
+//     "answertext"=>$answertext,
+//     "is_correct"=>$is_correct,
+//     "status"=>$status];
+// $arr2 = json_encode($arr2);
+
+if($_SERVER['REQUEST_METHOD'] == "PUT" && $_REQUEST['update_form_answers']){
+
+    UpdateDataAnswers($_REQUEST);
+}
 
 function UpdateDataAnswers($arr2){
     global $db;
     global $text;
     
-    $arr2 = json_decode($arr2,true);
     $id=$arr2['id'];
     $question_id=$arr2['question_id'];
     $created_at=$arr2['created_at'];
@@ -101,14 +134,19 @@ function UpdateDataAnswers($arr2){
             is_correct = '{$is_correct}',
             status = '{$status}'
             WHERE id = '{$id}'";
-    
-    $q = $db->query($sql);
 
-    if($q){
-      echo  http_response_code1(200);
+    $sorgu = $db->prepare($sql);
+    $sorgu->execute();
+    // $last_id = $db->lastInsertId();
+    $sorgu = $db->query("SELECT * FROM answers WHERE id = $id");
+
+    $cikti = $sorgu->fetch(PDO::FETCH_ASSOC);
+    if($cikti){
+        echo json_encode(["message" => 'Başarıyla yeni form verisi güncelledin',"data" => $cikti,"response_code" => http_response_code1(200)]);
     }else{
-       echo http_response_code1(400);
+        echo http_response_code1(400);
     }
+    
 }
 
 // UpdateDataAnswers($arr2);
