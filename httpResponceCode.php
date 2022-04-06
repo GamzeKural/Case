@@ -52,7 +52,3 @@
         return $text;
     }
 
-
-function asd(){
-    echo 'asd';
-}

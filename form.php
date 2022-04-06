@@ -37,9 +37,9 @@ function AddDataForm($arr){
 
     $cikti = $sorgu->fetch(PDO::FETCH_ASSOC);
     if($cikti){
-        echo json_encode(["message" => 'Başarıyla yeni form verisi ekledin',"data" => $cikti,"response_code" => http_response_code1(200)]);
+        echo json_encode(["status" => http_response_code1(200),"message" => 'You have successfully added new form',"data" => $cikti,"response_code" => 200]);
     }else{
-        echo json_encode(["message" => 'Form verisi eklenemedi',"data" => NULL,"response_code" => http_response_code1(400)]);
+        echo json_encode(["status" => http_response_code1(400),"message" => 'Failed to add data',"response_code" => 400]);
     }
 
 }
@@ -58,10 +58,40 @@ function ListDataForm(){
     $forms = $q->fetchAll(PDO::FETCH_ASSOC);
 
     // echo "<pre>";
-    $json_veri=json_encode($forms);
-    print_r($json_veri);
+    $data_count = count($forms);
+
+    if($forms){
+        echo json_encode(["status" => http_response_code1(200),"message" => 'You have successfully listed forms',"data" => $forms,"data_count" => $data_count,"response_code" => 200]);
+    }else{
+        echo json_encode(["status" => http_response_code1(400),"message" => 'Failed to list data',"response_code" => 400]);
+    }
 
 }
+
+if($_SERVER['REQUEST_METHOD'] == "GET" && $_REQUEST['get_form_data']){
+
+    GetDataForm($_REQUEST);
+}
+###ID YE GÖRE VERİ ÇEKME###
+function GetDataForm($id){
+    global $db;
+
+
+    $sql = "SELECT * FROM form WHERE id={$id}";
+    $q = $db->query($sql);
+    $forms = $q->fetch(PDO::FETCH_ASSOC);
+
+    // echo "<pre>";
+
+    if($forms){
+        echo json_encode(["status" => http_response_code1(200),"message" => 'You have successfully listed form',"data" => $forms,"response_code" => 200]);
+    }else{
+        echo json_encode(["status" => http_response_code1(400),"message" => 'Failed to list data',"response_code" => 400]);
+    }
+
+}
+
+
 // ListDataForm();
 // $id=20;
 // $formname="güncel2 sınav";
