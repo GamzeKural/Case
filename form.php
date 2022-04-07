@@ -1,18 +1,6 @@
 <?php
 require 'db.php';
 require 'httpResponceCode.php';
-// print_r($_POST);
-//  $formname=$_GET['formname'];
-//  $status=$_GET['status'];
-// $formname="toefl";
-// $status=1;
-//  $formname=$_POST['formname'];
-//  $status=$_POST['status'];
-// $arr=[
-//       "formname"=>$formname,
-//       "status"=>$status
-//     ];
-// $arr = json_encode($arr);
 
 if($_SERVER['REQUEST_METHOD'] == "POST" && $_REQUEST['add_form_data']){
 
@@ -20,7 +8,7 @@ if($_SERVER['REQUEST_METHOD'] == "POST" && $_REQUEST['add_form_data']){
 }
 
 ###VERİ EKLEME###
-// if(isset($_POST['formname'])){
+
 function AddDataForm($arr){
     global $db;
     global $text;
@@ -43,9 +31,10 @@ function AddDataForm($arr){
     }
 
 }
-if($_SERVER['REQUEST_METHOD'] == "GET" && $_REQUEST['list_form_datas']){
 
-    ListDataForms($_REQUEST);
+if(isset($_GET['list_form_datas'])){
+
+    ListDataForms($_GET['list_form_datas']);
 }
 
 ###VERİ LİSTELEME###
@@ -57,7 +46,6 @@ function ListDataForms(){
     $q = $db->query($sql);
     $forms = $q->fetchAll(PDO::FETCH_ASSOC);
 
-    // echo "<pre>";
     $data_count = count($forms);
 
     if($forms){
@@ -69,51 +57,37 @@ function ListDataForms(){
 }
 
 
-// if($_SERVER['REQUEST_METHOD'] == "GET" && $_REQUEST['list_form_data']){
 
-//     ListDataForm($_REQUEST);
-// }
+if(isset($_GET['list_form_data'])){
 
-// ###VERİ LİSTELEME###
-// function ListDataForm(){
-//     global $db;
+    ListDataForm($_GET['id']);
+}
 
-
-//     $sql = "SELECT * FROM form";
-//     $q = $db->query($sql);
-//     $forms = $q->fetchAll(PDO::FETCH_ASSOC);
-
-//     // echo "<pre>";
-//     $data_count = count($forms);
-
-//     if($forms){
-//         echo json_encode(["status" => http_response_code1(200),"message" => 'You have successfully listed forms',"data" => $forms,"data_count" => $data_count,"response_code" => 200]);
-//     }else{
-//         echo json_encode(["status" => http_response_code1(400),"message" => 'Failed to list data',"response_code" => 400]);
-//     }
-
-// }
+###VERİ LİSTELEME###
+function ListDataForm($id){
+    global $db;
 
 
+    $sql = "SELECT * FROM form WHERE id={$id}";
+    $q = $db->query($sql);
+    $forms = $q->fetch(PDO::FETCH_ASSOC);
 
 
-// ListDataForm();
-// $id=20;
-// $formname="güncel2 sınav";
-// $status=1;
-// // $id=$_POST['id'];
-// // $formname=$_POST['formname'];
-// // $status=$_POST['status'];
-// $arr2 =[
-//     "id"=>$id,
-// "formname"=>$formname,
-// "status"=>$status];
-// $arr2 = json_encode($arr2);
+    if($forms){
+        echo json_encode(["status" => http_response_code1(200),"message" => 'You have successfully listed form',"data" => $forms,"response_code" => 200]);
+    }else{
+        echo json_encode(["status" => http_response_code1(400),"message" => 'Failed to list form',"response_code" => 400]);
+    }
 
-if($_SERVER['REQUEST_METHOD'] == "PUT" && $_REQUEST['update_form_data']){
+}
+
+
+if($_SERVER['REQUEST_METHOD'] == "PUT" && isset($_REQUEST['update_form_data'])){
 
     UpdateDataForm($_REQUEST);
 }
+
+
 ###VERİ GÜNCELLEME###
 function UpdateDataForm($arr){
     global $db;
@@ -130,75 +104,52 @@ function UpdateDataForm($arr){
 
     $sorgu = $db->prepare($sql);
     $sorgu->execute();
-    // $last_id = $db->lastInsertId();
     $sorgu = $db->query("SELECT * FROM form WHERE id = $id");
 
     $cikti = $sorgu->fetch(PDO::FETCH_ASSOC);
     if($cikti){
-        echo json_encode(["message" => 'Başarıyla yeni form verisi güncelledin',"data" => $cikti,"response_code" => http_response_code1(200)]);
+        echo json_encode(["status" => http_response_code1(200),"message" => 'You have successfully updated form',"data" => $cikti,"response_code" => 200]);
     }else{
-        echo http_response_code1(400);
+        echo json_encode(["status" => http_response_code1(400),"message" => 'Failed to update data',"response_code" => 400]);
     }
-    
-    // $q = $db->query($sql);
-
-    // if($q){
-    //     echo http_response_code1(200);
-    // }else{
-    //    echo http_response_code1(400);
-    // }
 }
-// UpdateDataForm($arr2);
 
+if($_SERVER['REQUEST_METHOD'] == 'DELETE'){
 
-// ###VERİ PASİFE ALMA###
-// function DeactivationDataForm($id){
-    
-//     global $db;
+    DeleteDataForm($_GET['id']);
+}
+###VERİ SİLME###
+function DeleteDataForm($id){
+    global $db;
+    global $text;
 
-//     $sql = "UPDATE form SET status = 0 
-//             WHERE id='{$id}'";
+    $sql = "DELETE FROM form WHERE id={$id}";
 
-//     $q = $db->query($sql);
+    $query = $db->query($sql);
 
-//     if($q){
-//         echo 'Veritabanında formunuz pasife alınmıştır.';
-//     }else{
-//         echo 'Bir hata oluştu.';
-//     }
-// }
+    $count=$query->rowCount();
 
-// //  DeactivationDataForm(7);
+    if($query){
+        echo json_encode(["status" => http_response_code1(200),"message" => 'You have successfully delete form',"effected_count" => $count,"response_code" => 200]);
+    }else{
+        echo json_encode(["status" => http_response_code1(400),"message" => 'Failed to delete data',"response_code" => 400]);
+    }
 
+}
 
-// ###PASİF VERİYİ AKTİFLEŞTİRME###
+if($_SERVER['REQUEST_METHOD'] == "PUT" && isset($_REQUEST['activeOrPassive_form_data'])){
 
-// function ActivationDataForm($id){
-    
-//     global $db;
-
-//     $sql = "UPDATE form SET status = 1 
-//             WHERE id='{$id}'";
-
-//     $q = $db->query($sql);
-
-//     if($q){
-//         echo 'Veritabanında formunuz aktifleşmiştir.';
-//     }else{
-//         echo 'Bir hata oluştu.';
-//     }
-// }
-
-// //  ActivationDataForm(7);
+    activeOrPassiveForm($_REQUEST['id']);
+}
 
 function activeOrPassiveForm($id){
 
     global $db;
+    global $text;
 
     $sql = "SELECT * FROM form WHERE id ='{$id}'";
     $q = $db->query($sql);
     $forms= $q ->fetch(PDO::FETCH_ASSOC);
-    //$forms = $q->fetchAll(PDO::FETCH_ASSOC);
 
     if($forms['status']==1){
     
@@ -210,11 +161,16 @@ function activeOrPassiveForm($id){
                 WHERE id='{$id}'";
 
     }
-    $q = $db->query($update_sql);
+    $q2 = $db->query($update_sql);
+    $forms2= $q2 ->fetch(PDO::FETCH_ASSOC);
 
-    //print_r($forms);
+    $sorgu = $db->query("SELECT * FROM form WHERE id = $id");
+    $cikti = $sorgu->fetch(PDO::FETCH_ASSOC);
+
+    if($cikti){
+        echo json_encode(["status" => http_response_code1(200),"message" => 'You have successfully actived or passived form',"data" => $cikti,"response_code" => 200]);
+    }else{
+        echo json_encode(["status" => http_response_code1(400),"message" => 'Failed to actived or passived data',"response_code" => 400]);
+    }
 
 }
-
-// activeOrPassiveForm(6);
-// }

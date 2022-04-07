@@ -1,39 +1,7 @@
 <?php
 require 'db.php';
 require 'httpResponceCode.php';
-// $sequence=6;
-// $question_type=2;
-// $question_explanation="Doğru şıkkı işaretle";
-// $question_content="Php nedir";
-// $created_at="2022-04-04";
-// $updated_at="2022-04-04";
-// $form_id=7;
-// $time=60;
-// $score=5;
-// $status=1;
 
-// $sequence=$_POST['sequence'];
-// $question_type=$_POST['question_type'];
-// $question_explanation=$_POST['question_explanation'];
-// $question_content=$_POST['question_content'];
-// $created_at=$_POST['created_at'];
-// $updated_at=$_POST['updated_at'];
-// $form_id=$_POST['form_id'];
-// $time=$_POST['time'];
-// $score=$_POST['score'];
-// $status=$_POST['status'];
-// $arr=[
-//     "sequence"=>$sequence,
-//     "question_type"=>$question_type,
-//     "question_explanation"=>$question_explanation,
-//     "question_content"=>$question_content,
-//     "created_at"=>$created_at,
-//     "updated_at"=>$updated_at,
-//     "form_id"=>$form_id,
-//     "time"=>$time,
-//     "score"=>$score,
-//     "status"=>$status];
-// $arr = json_encode($arr);
 
 if($_SERVER['REQUEST_METHOD'] == "POST" && $_REQUEST['add_form_questions']){
 
@@ -42,7 +10,6 @@ if($_SERVER['REQUEST_METHOD'] == "POST" && $_REQUEST['add_form_questions']){
 
 ###VERİ EKLEME###
 function AddDataQuestions($arr){
-    //echo $sequence.$question_type.$question_explanation.$question_content.$created_at.$updated_at.$form_id.$time.$score.$status;
     global $db;
     global $text;
     
@@ -78,31 +45,33 @@ function AddDataQuestions($arr){
 
     $cikti = $sorgu->fetch(PDO::FETCH_ASSOC);
     if($cikti){
-        echo json_encode(["message" => 'Başarıyla yeni question verisi ekledin',"data" => $cikti,"response_code" => http_response_code1(200)]);
+        echo json_encode(["status" => http_response_code1(200),"message" => 'You have successfully added new question',"data" => $cikti,"response_code" => 200]);
     }else{
-        echo http_response_code1(400);
+        echo json_encode(["status" => http_response_code1(400),"message" => 'Failed to add question',"response_code" => 400]);
     }
 
 
 }
-//  AddDataQuestions($arr);
 
-if($_SERVER['REQUEST_METHOD'] == "GET" && $_REQUEST['list_form_questions']){
 
-    ListDataQuestions($_REQUEST);
+if(isset($_GET['list_question_datas'])){
+
+    ListDataQuestions($_GET['list_question_datas']);
 }
+
 ###VERİ LİSTELEME###
 function ListDataQuestions(){
     global $db;
     $sql = "SELECT * FROM questions";
     $q = $db->query($sql);
     $questions = $q->fetchAll(PDO::FETCH_ASSOC);
-    // $payLoad=[];
-    // $payLoad['questions']=$questions;
-    // $payLoad['totaltimer']=$totaltimer;
-    // echo "<pre>";
-    $json_veri=json_encode($questions);
-    print_r($json_veri);
+    $data_count = count($questions);
+
+    if($questions){
+        echo json_encode(["status" => http_response_code1(200),"message" => 'You have successfully listed questions',"data" => $questions,"data_count" => $data_count,"response_code" => 200]);
+    }else{
+        echo json_encode(["status" => http_response_code1(400),"message" => 'Failed to list data',"response_code" => 400]);
+    }
 
 }
 // ListDataQuestions();
